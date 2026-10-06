@@ -6,8 +6,8 @@
 
 | 资源 | 推荐 | 固定费用 | 是否可替换 |
 | --- | --- | ---: | --- |
-| 源码与内容仓库 | GitHub 私有仓库 | 0 元 | 可迁移到任意 Git 服务 |
-| 静态托管 | Cloudflare Pages | 0 元 | 可迁移到 Netlify、Vercel、GitHub Pages 或对象存储 |
+| 源码与内容仓库 | GitHub 公开仓库 | 0 元 | 可迁移到任意 Git 服务 |
+| 静态托管 | GitHub Pages | 0 元 | 可迁移到 Vercel、Cloudflare Pages、Netlify 或对象存储 |
 | 域名 | 确定站点后购买 | 按年支付 | 可更换，不影响文章源文件 |
 | 数据库 / CMS / 分析 | 首版不使用 | 0 元 | 有明确需求后再评估 |
 
@@ -19,19 +19,21 @@
 
 - 本地环境模板：`.env.example`
 - 正式部署唯一必需变量：`SITE_URL`
-- 域名 DNS、GitHub 与 Cloudflare 登录凭据只保存在各自账号和密码管理器中，不写入仓库
+- 域名 DNS、GitHub、GitHub Pages 与其他托管平台的登录凭据只保存在各自账号和密码管理器中，不写入仓库
 - 以后若增加服务，为每项服务在本节登记用途、负责人、续费日、恢复方式和密钥位置
 
-## Cloudflare Pages 部署
+## GitHub Pages 部署
 
-1. 将项目推送到私有 GitHub 仓库。
-2. 在 Cloudflare Pages 中连接该仓库。
-3. 构建命令设置为 `npm run build`，输出目录设置为 `dist`。
-4. 添加 `SITE_URL=https://最终域名`。
-5. 首次部署后检查 `/rss.xml`、`/sitemap-index.xml` 和 `/search/`。
-6. 再绑定自定义域名；确认无误后才分享正式地址。
+1. 保持仓库公开，或使用 GitHub Pro、Team 或 Enterprise 以支持私有仓库 Pages。
+2. 在仓库 **Settings → Pages** 中将 **Source** 设为 **GitHub Actions**。
+3. `.github/workflows/deploy-pages.yml` 会安装 Node 22，运行 `npm run build`，并发布 `dist`。
+4. 当前项目使用 `SITE_URL=https://hojicha333.github.io` 与 `BASE_PATH=/hhhblog`，因此站点地址为 `https://hojicha333.github.io/hhhblog/`。
+5. 首次部署后检查首页、`/rss.xml`、`/sitemap-index.xml` 和 `/search/`。
+6. 若以后绑定自定义域名，将 `SITE_URL` 改为新域名，并把 `BASE_PATH` 改为 `/`。
 
-Cloudflare Pages 默认会在每次推送后重新构建。无需 GitHub Actions；少一层配置意味着更少的维护面。如果将来迁移平台，再按目标平台补 CI。
+GitHub Pages 只提供静态文件托管。数据库、登录、评论、后台管理、文件上传、服务器端接口和实时状态等需求需要额外服务。当前站点只使用静态页面、构建时搜索和 RSS，因此不受此限制。
+
+如果以后需要保持仓库私有或增加运行时功能，可以把同一仓库接到 Vercel 或 Cloudflare Pages。两者都支持免费静态部署，不需要改变内容真源。
 
 ## 日常维护
 
@@ -50,7 +52,7 @@ npm run build
 
 目标状态是 Git 历史加本机副本：
 
-1. 私有远程仓库保存完整提交历史。
+1. 远程 GitHub 仓库保存完整提交历史。
 2. 本机保留正常工作副本。
 3. 每季度把仓库镜像或压缩包备份到另一块磁盘或可信云盘。
 4. 域名、DNS 和托管配置截图或导出后与账号恢复码一并保存。

@@ -6,6 +6,7 @@ import ArticleRow from "../components/ArticleRow.astro";
 import RandomLink from "../components/RandomLink.astro";
 import { collectionMeta } from "../data/site";
 import { entryHref, formatDate, formatIssueDate, getAllEntries } from "../lib/content";
+import { sitePath } from "../lib/paths";
 
 const entries = await getAllEntries();
 const featuredEssay = entries.find((entry) => entry.collection === "essays" && entry.data.featured) ?? entries[0];
@@ -77,7 +78,7 @@ const rooms = Object.entries(collectionMeta).map(([key, value]) => ({
     </div>
     <div class="room-grid">
       {rooms.map((room, index) => (
-        <a class={`room-tile accent-border-${room.accent}`} href={`/${room.key}/`} data-reveal>
+        <a class={`room-tile accent-border-${room.accent}`} href={sitePath(`/${room.key}/`)} data-reveal>
           <div class="room-tile-top">
             <span>{String(index + 1).padStart(2, "0")}</span>
             <span>{String(room.count).padStart(2, "0")} ENTRIES</span>
@@ -131,7 +132,7 @@ const rooms = Object.entries(collectionMeta).map(([key, value]) => ({
         <p class="eyebrow">RECENT TRANSMISSIONS</p>
         <h2>最近收录</h2>
       </div>
-      <a href="/archive/">完整时间归档</a>
+      <a href={sitePath("/archive/")}>完整时间归档</a>
     </div>
     <div class="article-list">
       {latest.map((entry, index) => <ArticleRow entry={entry} index={index} />)}

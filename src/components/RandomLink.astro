@@ -2,6 +2,7 @@
 import { Shuffle } from "@lucide/astro";
 import type { SiteEntry } from "../lib/content";
 import { entryHref } from "../lib/content";
+import { sitePath } from "../lib/paths";
 
 interface Props {
   entries: SiteEntry[];
@@ -13,7 +14,7 @@ const { entries, label = "随机漫游", class: className = "text-link" } = Astr
 const paths = entries.map(entryHref);
 ---
 
-<a class={className} href={paths[0] || "/"} data-random-link data-paths={JSON.stringify(paths)}>
+<a class={className} href={paths[0] || sitePath("/")} data-random-link data-paths={JSON.stringify(paths)}>
   <Shuffle size={16} stroke-width={1.6} aria-hidden="true" />
   {label}
 </a>

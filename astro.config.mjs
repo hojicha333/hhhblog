@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: process.env.SITE_URL || "https://hhh-radio.example",
+  base: process.env.BASE_PATH || "/",
   output: "static",
   trailingSlash: "always",
   integrations: [mdx(), sitemap()],

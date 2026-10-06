@@ -6,6 +6,7 @@ import type { CollectionName } from "../data/site";
 import { collectionMeta } from "../data/site";
 import CoverImage from "./CoverImage.astro";
 import ArticleRow from "./ArticleRow.astro";
+import { sitePath } from "../lib/paths";
 
 interface Props {
   collection: CollectionName;
@@ -64,7 +65,7 @@ const cover = featured?.data.cover ?? (collection === "projects" ? "console" : c
       <p class="eyebrow">INDEX / {String(entries.length).padStart(2, "0")} ENTRIES</p>
       <h2>房间里的其他内容</h2>
     </div>
-    <a href="/archive/">查看时间归档</a>
+    <a href={sitePath("/archive/")}>查看时间归档</a>
   </div>
   <div class="article-list">
     {remainder.length > 0 ? (

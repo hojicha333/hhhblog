@@ -66,7 +66,11 @@ dist/                    生产构建结果
 
 ## 部署
 
-首选 Cloudflare Pages：
+当前首选 GitHub Pages。仓库名为 `hhhblog`，正式地址是 `https://hojicha333.github.io/hhhblog/`。
+
+GitHub Actions 工作流位于 `.github/workflows/deploy-pages.yml`。第一次启用时，在仓库 **Settings → Pages** 中将 **Source** 设为 **GitHub Actions**。之后推送 `main` 会自动构建并发布。
+
+构建参数如下：
 
 | 设置 | 值 |
 | --- | --- |
@@ -74,8 +78,10 @@ dist/                    生产构建结果
 | Build command | `npm run build` |
 | Build output | `dist` |
 | Node version | `22` 或更新 |
-| Environment variable | `SITE_URL=https://你的域名` |
+| Environment variable | `SITE_URL=https://hojicha333.github.io`、`BASE_PATH=/hhhblog` |
 
-在确定域名之前不必配置 `SITE_URL`；本地构建会使用占位地址。正式发布前必须设置它，以便 canonical、RSS 和 sitemap 指向正确域名。
+当前项目不需要自定义域名。若以后绑定域名，只需把工作流中的 `SITE_URL` 改为新域名，并将 `BASE_PATH` 改为 `/`。
+
+如果以后需要保持仓库私有，或需要服务器端接口、数据库、登录、评论、上传和后台管理，可以把同一个仓库接到 Vercel 或 Cloudflare Pages；当前站点的静态内容功能不依赖这些能力。
 
 维护、备份与迁移步骤见 [运行手册](docs/OPERATIONS.md)，后续功能取舍见 [路线图](docs/ROADMAP.md)。

@@ -10,6 +10,8 @@ const sourceRoot = path.join(projectRoot, "content");
 const generatedRoot = path.join(projectRoot, ".generated", "content");
 const mediaRoot = path.join(projectRoot, "public", "content-media");
 const collections = ["essays", "projects", "research", "signals"];
+const basePath = (process.env.BASE_PATH || "").replace(/\/$/, "");
+const publicMediaRoot = `${basePath}/content-media` || "/content-media";
 
 const posix = (value) => value.split(path.sep).join("/");
 
@@ -125,7 +127,7 @@ function rewriteAssetLinks(body, collection, relativeFile) {
     const match = clean.match(/^([^?#]+)([?#].*)?$/);
     if (!match) return rawUrl;
     const resolved = path.posix.normalize(path.posix.join(sourceDirectory, match[1]));
-    return `/content-media/${collection}/${resolved}${match[2] || ""}`;
+    return `${publicMediaRoot}/${collection}/${resolved}${match[2] || ""}`;
   };
 
   return body

@@ -14,6 +14,7 @@ import {
   readingLabel,
   type SiteEntry
 } from "../../lib/content";
+import { sitePath } from "../../lib/paths";
 
 export async function getStaticPaths() {
   const entries = await getAllEntries({ includeArchived: true });
@@ -81,7 +82,7 @@ const jsonLd = {
     <header class={`content-hero ${entry.data.cover ? "has-cover" : ""}`}>
       <div class="wide-shell content-hero-grid">
         <div class="content-heading">
-          <a class="back-link" href={`/${entry.collection}/`}>
+          <a class="back-link" href={sitePath(`/${entry.collection}/`)}>
             <ArrowLeft size={15} stroke-width={1.6} />
             {info.label} / {info.english}
           </a>

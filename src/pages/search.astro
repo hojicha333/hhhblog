@@ -1,10 +1,11 @@
 ---
 import { Search as SearchIcon } from "@lucide/astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { sitePath } from "../lib/paths";
 ---
 
 <BaseLayout title="搜索" description="搜索 hhh电台的所有公开内容。" bodyClass="search-page">
-  <link slot="head" href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <link slot="head" href={sitePath("/pagefind/pagefind-ui.css")} rel="stylesheet" />
   <header class="plain-masthead search-masthead">
     <div class="wide-shell plain-masthead-grid">
       <div>
@@ -27,7 +28,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </section>
 </BaseLayout>
 
-<script is:inline src="/pagefind/pagefind-ui.js"></script>
+<script is:inline src={sitePath("/pagefind/pagefind-ui.js")}></script>
 <script is:inline>
   window.addEventListener("DOMContentLoaded", () => {
     const target = document.querySelector("#search");

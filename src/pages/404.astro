@@ -1,6 +1,7 @@
 ---
 import { ArrowLeft, Search } from "@lucide/astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { sitePath } from "../lib/paths";
 ---
 
 <BaseLayout title="频率未找到" description="这个地址没有对应的内容。" noindex bodyClass="not-found-page">
@@ -10,8 +11,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <h1>这个频率暂时没有内容。</h1>
     <p>地址可能已经改变，也可能这间房还没有建好。</p>
     <div class="not-found-actions">
-      <a class="button-link" href="/"><ArrowLeft size={17} /> 返回首页</a>
-      <a class="text-link" href="/search/"><Search size={16} /> 搜索归档</a>
+      <a class="button-link" href={sitePath("/")}><ArrowLeft size={17} /> 返回首页</a>
+      <a class="text-link" href={sitePath("/search/")}><Search size={16} /> 搜索归档</a>
     </div>
   </section>
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import { ArrowUpRight, Rss } from "@lucide/astro";
 import { site } from "../data/site";
+import { sitePath } from "../lib/paths";
 ---
 
 <footer class="site-footer" data-pagefind-ignore>
@@ -13,9 +14,9 @@ import { site } from "../data/site";
       </div>
     </div>
     <nav aria-label="页脚导航">
-      <a href="/archive/">归档</a>
-      <a href="/about/">关于</a>
-      <a href="/rss.xml">
+      <a href={sitePath("/archive/")}>归档</a>
+      <a href={sitePath("/about/")}>关于</a>
+      <a href={sitePath("/rss.xml")}>
         RSS <Rss size={13} aria-hidden="true" />
       </a>
       <a href="#top" aria-label="返回页首">

@@ -1,22 +1,23 @@
 ---
 import { Menu, Moon, Search, Shuffle, Sun, X } from "@lucide/astro";
 import { site } from "../data/site";
+import { routePath, sitePath } from "../lib/paths";
 
-const pathname = Astro.url.pathname;
+const pathname = routePath(Astro.url.pathname);
 const isActive = (href: string) => pathname.startsWith(href);
 ---
 
 <header class="site-header" data-pagefind-ignore>
   <a class="skip-link" href="#main-content">跳到正文</a>
   <div class="header-inner">
-    <a class="wordmark" href="/" aria-label="hhh电台首页">
+    <a class="wordmark" href={sitePath("/")} aria-label="hhh电台首页">
       <span class="wordmark-dot" aria-hidden="true"></span>
       <span>{site.name}</span>
     </a>
 
     <nav class="desktop-nav" aria-label="主要导航">
       {site.nav.map((item) => (
-        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+        <a href={sitePath(item.href)} aria-current={isActive(item.href) ? "page" : undefined}>
           <span>{item.label}</span>
           <small>{item.sublabel}</small>
         </a>
@@ -24,10 +25,10 @@ const isActive = (href: string) => pathname.startsWith(href);
     </nav>
 
     <div class="header-tools">
-      <a class="icon-button desktop-tool" href="/random/" aria-label="随机漫游" title="随机漫游">
+      <a class="icon-button desktop-tool" href={sitePath("/random/")} aria-label="随机漫游" title="随机漫游">
         <Shuffle size={18} stroke-width={1.7} />
       </a>
-      <a class="icon-button" href="/search/" aria-label="搜索" title="搜索">
+      <a class="icon-button" href={sitePath("/search/")} aria-label="搜索" title="搜索">
         <Search size={19} stroke-width={1.7} />
       </a>
       <button class="icon-button theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题">
@@ -43,16 +44,16 @@ const isActive = (href: string) => pathname.startsWith(href);
 
   <nav class="mobile-nav" aria-label="移动端导航" aria-hidden="true" inert>
     {site.nav.map((item, index) => (
-      <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+      <a href={sitePath(item.href)} aria-current={isActive(item.href) ? "page" : undefined}>
         <span class="mobile-nav-index">0{index + 1}</span>
         <span>{item.label}</span>
         <small>{item.sublabel}</small>
       </a>
     ))}
     <div class="mobile-nav-secondary">
-      <a href="/archive/">时间归档</a>
-      <a href="/about/">关于这里</a>
-      <a href="/random/">随机漫游</a>
+      <a href={sitePath("/archive/")}>时间归档</a>
+      <a href={sitePath("/about/")}>关于这里</a>
+      <a href={sitePath("/random/")}>随机漫游</a>
     </div>
   </nav>
 </header>

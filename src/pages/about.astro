@@ -3,6 +3,7 @@ import { ArrowRight, CircleDot, Code, FileText, Radio, ShieldCheck } from "@luci
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CoverImage from "../components/CoverImage.astro";
 import { collectionMeta } from "../data/site";
+import { sitePath } from "../lib/paths";
 ---
 
 <BaseLayout title="关于这里" description="hhh电台的编辑原则、房间结构与联系方式。">
@@ -63,7 +64,7 @@ import { collectionMeta } from "../data/site";
       </div>
       <div class="about-room-list">
         {Object.entries(collectionMeta).map(([key, room], index) => (
-          <a href={`/${key}/`}>
+          <a href={sitePath(`/${key}/`)}>
             <span>0{index + 1}</span>
             <strong>{room.label}</strong>
             <small>{room.english}</small>

@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { collectionMeta, type CollectionName } from "../data/site";
+import { sitePath } from "./paths";
 
 export type SiteEntry =
   | CollectionEntry<"essays">
@@ -21,7 +22,7 @@ export async function getAllEntries(options: { includeArchived?: boolean } = {})
 }
 
 export function entryHref(entry: SiteEntry) {
-  return `/${entry.collection}/${entry.data.slug}/`;
+  return sitePath(`/${entry.collection}/${entry.data.slug}/`);
 }
 
 export function formatDate(date: Date, locale = "zh-CN") {
