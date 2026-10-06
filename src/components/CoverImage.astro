@@ -1,0 +1,33 @@
+---
+import { Image } from "astro:assets";
+import { covers, type CoverName } from "../lib/covers";
+
+interface Props {
+  name?: CoverName;
+  alt: string;
+  class?: string;
+  loading?: "eager" | "lazy";
+  widths?: number[];
+  sizes?: string;
+}
+
+const {
+  name = "editorial",
+  alt,
+  class: className,
+  loading = "lazy",
+  widths = [640, 960, 1280, 1600],
+  sizes = "(max-width: 760px) 100vw, 80vw"
+} = Astro.props;
+---
+
+<Image
+  src={covers[name]}
+  alt={alt}
+  class={className}
+  widths={widths}
+  sizes={sizes}
+  loading={loading}
+  format="webp"
+  quality={84}
+/>

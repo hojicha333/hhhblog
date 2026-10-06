@@ -1,0 +1,33 @@
+---
+import { Shuffle } from "@lucide/astro";
+import type { SiteEntry } from "../lib/content";
+import { entryHref } from "../lib/content";
+
+interface Props {
+  entries: SiteEntry[];
+  label?: string;
+  class?: string;
+}
+
+const { entries, label = "随机漫游", class: className = "text-link" } = Astro.props;
+const paths = entries.map(entryHref);
+---
+
+<a class={className} href={paths[0] || "/"} data-random-link data-paths={JSON.stringify(paths)}>
+  <Shuffle size={16} stroke-width={1.6} aria-hidden="true" />
+  {label}
+</a>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-random-link]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const paths = JSON.parse(link.dataset.paths || "[]") as string[];
+      if (!paths.length) return;
+      event.preventDefault();
+      const current = window.location.pathname;
+      const candidates = paths.filter((path) => path !== current);
+      const target = candidates[Math.floor(Math.random() * candidates.length)] || paths[0];
+      window.location.assign(target);
+    });
+  });
+</script>

@@ -1,0 +1,88 @@
+---
+import { ArrowRight, CircleDot, Code, FileText, Radio, ShieldCheck } from "@lucide/astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CoverImage from "../components/CoverImage.astro";
+import { collectionMeta } from "../data/site";
+---
+
+<BaseLayout title="关于这里" description="hhh电台的编辑原则、房间结构与联系方式。">
+  <header class="about-hero">
+    <div class="wide-shell about-hero-grid">
+      <div class="about-heading">
+        <p class="eyebrow">ABOUT / STATION ID</p>
+        <h1>一座会继续增建的房子，<br />也是一份间歇出版的个人刊物。</h1>
+      </div>
+      <div class="about-image">
+        <CoverImage name="rooms" alt="由玻璃隔间构成、向远处延伸的工作空间" loading="eager" />
+      </div>
+      <div class="about-intro">
+        <p>hhh电台收录研究、工程、随笔和兴趣。它首先服务于未来的自己，也希望为研究者、合作者和偶然路过的人提供一份清楚、可信、仍在变化的个人索引。</p>
+        <p>这里以网名出现。现实身份、合作细节与联系方式会在合适的页面按需补充。</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="about-principles wide-shell">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">EDITORIAL POLICY</p>
+        <h2>这里如何工作</h2>
+      </div>
+    </div>
+    <div class="principle-grid">
+      <article>
+        <CircleDot size={19} />
+        <h3>完成度优先</h3>
+        <p>公开经过整理、愿意负责的版本。原始碎片继续留在私人笔记里生长。</p>
+      </article>
+      <article>
+        <FileText size={19} />
+        <h3>普通文件是真源</h3>
+        <p>文章由 Markdown 与图片组成，不依赖专有后台，可以迁移，也可以离线保存。</p>
+      </article>
+      <article>
+        <ShieldCheck size={19} />
+        <h3>隐私逐篇判断</h3>
+        <p>他人信息、未公开研究、实时位置与私人经历在发布前单独审视。</p>
+      </article>
+      <article>
+        <Radio size={19} />
+        <h3>允许长久安静</h3>
+        <p>更新可以一阵一阵发生。旧内容不会因为没有“持续运营”而失去意义。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-rooms">
+    <div class="wide-shell">
+      <div class="section-heading compact-heading">
+        <div>
+          <p class="eyebrow">THE ROOMS</p>
+          <h2>当前平面图</h2>
+        </div>
+      </div>
+      <div class="about-room-list">
+        {Object.entries(collectionMeta).map(([key, room], index) => (
+          <a href={`/${key}/`}>
+            <span>0{index + 1}</span>
+            <strong>{room.label}</strong>
+            <small>{room.english}</small>
+            <p>{room.description}</p>
+            <ArrowRight size={18} />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-band wide-shell">
+    <div>
+      <p class="eyebrow">CONTACT / 暂未开放</p>
+      <h2>正式发布前，再决定哪一扇门用来联系。</h2>
+    </div>
+    <div class="contact-options">
+      <span><Code size={17} /> GitHub：待补充</span>
+      <span><Radio size={17} /> Email：待补充</span>
+    </div>
+  </section>
+</BaseLayout>

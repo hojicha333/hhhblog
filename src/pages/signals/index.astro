@@ -1,0 +1,13 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RoomIndex from "../../components/RoomIndex.astro";
+import type { SiteEntry } from "../../lib/content";
+
+const entries = (await getCollection("signals"))
+  .filter((entry) => entry.data.status !== "archived")
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) as SiteEntry[];
+---
+<BaseLayout title="天线间 / Signals" description="语言、音乐、无线电、解谜、图寻与未命名的兴趣。">
+  <RoomIndex collection="signals" entries={entries} />
+</BaseLayout>

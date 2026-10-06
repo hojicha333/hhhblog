@@ -1,0 +1,151 @@
+---
+import { ArrowDown, ArrowRight, Radio, Sparkles } from "@lucide/astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CoverImage from "../components/CoverImage.astro";
+import ArticleRow from "../components/ArticleRow.astro";
+import RandomLink from "../components/RandomLink.astro";
+import { collectionMeta } from "../data/site";
+import { entryHref, formatDate, formatIssueDate, getAllEntries } from "../lib/content";
+
+const entries = await getAllEntries();
+const featuredEssay = entries.find((entry) => entry.collection === "essays" && entry.data.featured) ?? entries[0];
+const featuredProject = entries.find((entry) => entry.collection === "projects" && entry.data.featured);
+const latest = entries.filter((entry) => entry.id !== featuredEssay?.id).slice(0, 5);
+const issueDate = formatIssueDate(entries[0]?.data.date ?? new Date());
+const rooms = Object.entries(collectionMeta).map(([key, value]) => ({
+  key,
+  ...value,
+  count: entries.filter((entry) => entry.collection === key).length
+}));
+---
+
+<BaseLayout bodyClass="home-page">
+  <section class="edition-hero" aria-labelledby="hero-title">
+    <CoverImage
+      name="editorial"
+      alt="摆有吉他、键盘、麦克风和书籍的个人创作空间"
+      class="edition-hero-image"
+      loading="eager"
+      widths={[720, 1080, 1440, 1920]}
+      sizes="100vw"
+    />
+    <div class="edition-hero-shade" aria-hidden="true"></div>
+    <div class="wide-shell edition-hero-inner">
+      <div class="issue-line">
+        <span>ISSUE 000</span>
+        <span>{issueDate}</span>
+        <span>SHANGHAI / SOMEWHERE</span>
+      </div>
+      <div class="hero-lockup" data-reveal>
+        <p class="hero-kicker"><Radio size={15} stroke-width={1.6} /> Personal magazine on an open frequency</p>
+        <h1 id="hero-title">hhh电台</h1>
+        <p class="hero-deck">研究，制作，与漫游。<br />记录已经做过的事，也接收下一种还没有名字的信号。</p>
+      </div>
+      {featuredEssay && (
+        <a class="hero-feature" href={entryHref(featuredEssay)}>
+          <div>
+            <span>本期封面 / COVER STORY</span>
+            <time datetime={featuredEssay.data.date.toISOString()}>{formatDate(featuredEssay.data.date)}</time>
+          </div>
+          <strong>{featuredEssay.data.title}</strong>
+          <p>{featuredEssay.data.description}</p>
+          <ArrowRight size={22} stroke-width={1.5} aria-hidden="true" />
+        </a>
+      )}
+      <a class="hero-scroll" href="#rooms" aria-label="继续浏览">
+        <ArrowDown size={18} stroke-width={1.5} />
+      </a>
+    </div>
+  </section>
+
+  <section class="signal-strip" aria-label="网站信息">
+    <div class="wide-shell signal-strip-inner">
+      <span><i class="live-dot"></i> STATIC SIGNAL / ONLINE</span>
+      <span>{String(entries.length).padStart(2, "0")} ENTRIES ARCHIVED</span>
+      <span>ZH / EN AS NEEDED</span>
+      <span>NO TRACKING</span>
+    </div>
+  </section>
+
+  <section class="rooms-section wide-shell" id="rooms">
+    <div class="section-heading" data-reveal>
+      <div>
+        <p class="eyebrow">DIRECTORY / 生长的房子</p>
+        <h2>从一扇门进入，<br />沿自己的路径继续。</h2>
+      </div>
+      <p>四个房间构成当前的目录。新的兴趣可以继续增建，原有内容仍保有稳定地址。</p>
+    </div>
+    <div class="room-grid">
+      {rooms.map((room, index) => (
+        <a class={`room-tile accent-border-${room.accent}`} href={`/${room.key}/`} data-reveal>
+          <div class="room-tile-top">
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <span>{String(room.count).padStart(2, "0")} ENTRIES</span>
+          </div>
+          <div>
+            <p class={`accent-${room.accent}`}>{room.english}</p>
+            <h3>{room.label}</h3>
+            <span>{room.description}</span>
+          </div>
+          <ArrowRight size={18} stroke-width={1.5} aria-hidden="true" />
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {featuredProject && (
+    <section class="feature-project-band">
+      <div class="wide-shell feature-project-grid">
+        <div class="feature-project-image" data-reveal>
+          <CoverImage
+            name={featuredProject.data.cover ?? "console"}
+            alt={featuredProject.data.coverAlt || "项目代表图像"}
+            sizes="(max-width: 760px) 100vw, 55vw"
+          />
+          <span>WORKBENCH / SELECTED PROJECT</span>
+        </div>
+        <div class="feature-project-copy" data-reveal>
+          <div class="console-heading">
+            <span class="signal-light"></span>
+            <span>PROJECT CHANNEL 02</span>
+            <span>{featuredProject.data.stage ?? "ARCHIVED"}</span>
+          </div>
+          <p class="eyebrow accent-green">工坊 / PROJECTS</p>
+          <h2>{featuredProject.data.title}</h2>
+          <p>{featuredProject.data.description}</p>
+          <dl class="mini-specs">
+            <div><dt>ROLE</dt><dd>{featuredProject.data.role ?? "记录待补充"}</dd></div>
+            <div><dt>OUTPUT</dt><dd>{featuredProject.data.outputs?.[0] ?? "案例与过程记录"}</dd></div>
+          </dl>
+          <a class="button-link" href={entryHref(featuredProject)}>
+            查看项目记录 <ArrowRight size={17} stroke-width={1.6} />
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="latest-section wide-shell">
+    <div class="section-heading compact-heading" data-reveal>
+      <div>
+        <p class="eyebrow">RECENT TRANSMISSIONS</p>
+        <h2>最近收录</h2>
+      </div>
+      <a href="/archive/">完整时间归档</a>
+    </div>
+    <div class="article-list">
+      {latest.map((entry, index) => <ArticleRow entry={entry} index={index} />)}
+    </div>
+  </section>
+
+  <section class="wander-band">
+    <div class="wide-shell wander-inner" data-reveal>
+      <div>
+        <p class="eyebrow"><Sparkles size={15} stroke-width={1.5} /> OFF THE MAP</p>
+        <h2>不知道从哪里开始，就交给一次偶然。</h2>
+      </div>
+      <RandomLink entries={entries} label="随便带我去一篇" class="button-link button-link-light" />
+    </div>
+  </section>
+</BaseLayout>
+

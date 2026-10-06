@@ -1,0 +1,220 @@
+---
+import { render } from "astro:content";
+import { ArrowLeft, ArrowRight, Clock3, FileText, Radio, Tag } from "@lucide/astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CoverImage from "../../components/CoverImage.astro";
+import ArticleRow from "../../components/ArticleRow.astro";
+import RandomLink from "../../components/RandomLink.astro";
+import { site } from "../../data/site";
+import {
+  collectionInfo,
+  entryHref,
+  formatDate,
+  getAllEntries,
+  readingLabel,
+  type SiteEntry
+} from "../../lib/content";
+
+export async function getStaticPaths() {
+  const entries = await getAllEntries({ includeArchived: true });
+  return entries.map((entry) => ({
+    params: { section: entry.collection, slug: entry.data.slug },
+    props: { entry }
+  }));
+}
+
+interface Props {
+  entry: SiteEntry;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const info = collectionInfo(entry);
+const allEntries = await getAllEntries();
+const currentIndex = allEntries.findIndex((item) => item.id === entry.id && item.collection === entry.collection);
+const previous = currentIndex >= 0 ? allEntries[currentIndex + 1] : undefined;
+const next = currentIndex > 0 ? allEntries[currentIndex - 1] : undefined;
+const related = allEntries
+  .filter((item) => item.id !== entry.id)
+  .map((item) => ({
+    item,
+    score:
+      (item.collection === entry.collection ? 3 : 0) +
+      item.data.tags.filter((tag) => entry.data.tags.includes(tag)).length
+  }))
+  .filter(({ score }) => score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 2)
+  .map(({ item }) => item);
+const isWorkbench = entry.collection === "projects" || entry.collection === "research";
+const published = entry.data.date.toISOString();
+const canonical = new URL(entryHref(entry), Astro.site).toString();
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": isWorkbench ? "TechArticle" : "Article",
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: published,
+  dateModified: entry.data.updated?.toISOString() ?? published,
+  inLanguage: entry.data.lang,
+  author: { "@type": "Person", name: site.author },
+  publisher: { "@type": "Organization", name: site.name },
+  mainEntityOfPage: canonical,
+  keywords: entry.data.tags.join(", ")
+};
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  type="article"
+  lang={entry.data.lang}
+  noindex={entry.data.status === "archived"}
+  bodyClass={isWorkbench ? "workbench-page" : "article-page"}
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <article
+    class={`content-entry accent-border-${info.accent}`}
+    data-pagefind-body={entry.data.status !== "archived" ? true : undefined}
+  >
+    <header class={`content-hero ${entry.data.cover ? "has-cover" : ""}`}>
+      <div class="wide-shell content-hero-grid">
+        <div class="content-heading">
+          <a class="back-link" href={`/${entry.collection}/`}>
+            <ArrowLeft size={15} stroke-width={1.6} />
+            {info.label} / {info.english}
+          </a>
+          <div class="content-broadcast-line">
+            <span class="signal-light"></span>
+            <span>{info.code}</span>
+            <span>ARCHIVE SIGNAL</span>
+          </div>
+          <h1 data-pagefind-meta="title">{entry.data.title}</h1>
+          <p class="content-description">{entry.data.description}</p>
+          <div class="content-byline">
+            <time datetime={published}>{formatDate(entry.data.date)}</time>
+            <span><Clock3 size={14} /> {readingLabel(entry.data.readingMinutes)}</span>
+            <span><FileText size={14} /> Markdown</span>
+          </div>
+        </div>
+        {entry.data.cover && (
+          <div class="content-cover">
+            <CoverImage
+              name={entry.data.cover}
+              alt={entry.data.coverAlt || "文章代表图像"}
+              loading="eager"
+              sizes="(max-width: 820px) 100vw, 46vw"
+            />
+            <div class="content-cover-caption">
+              <span>FIG. 001 / EDITORIAL IMAGE</span>
+              <span>{entry.data.status === "sample" ? "SAMPLE ENTRY" : "HHH RADIO"}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+
+    {entry.data.status === "sample" && (
+      <aside class="sample-notice wide-shell" aria-label="示例内容提示">
+        <strong>示例内容</strong>
+        <p>这篇文字用于验证首版结构和排版，正式使用时可以直接替换对应的 Markdown 文件。</p>
+      </aside>
+    )}
+
+    {isWorkbench && (
+      <section class="workbench-console wide-shell" aria-label="项目摘要">
+        <div class="console-status">
+          <div><Radio size={17} /><span>STATIC RECORD</span></div>
+          <strong>{entry.data.stage ?? "ARCHIVED"}</strong>
+        </div>
+        <dl>
+          <div>
+            <dt>CHANNEL</dt>
+            <dd>{info.label} / {info.english}</dd>
+          </div>
+          <div>
+            <dt>ROLE</dt>
+            <dd>{entry.data.role ?? "待补充"}</dd>
+          </div>
+          <div>
+            <dt>OUTPUTS</dt>
+            <dd>{entry.data.outputs?.join(" / ") ?? "正文记录"}</dd>
+          </div>
+          <div>
+            <dt>LAST CHECK</dt>
+            <dd>{formatDate(entry.data.updated ?? entry.data.date)}</dd>
+          </div>
+        </dl>
+      </section>
+    )}
+
+    <div class="article-shell wide-shell">
+      <aside class="article-rail" data-pagefind-ignore>
+        <div class="rail-block">
+          <span class="rail-label">ON THIS PAGE</span>
+          {headings.filter((heading) => heading.depth === 2).length > 0 ? (
+            <nav aria-label="文章目录">
+              {headings.filter((heading) => heading.depth === 2).map((heading) => (
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              ))}
+            </nav>
+          ) : (
+            <p>一篇短记录</p>
+          )}
+        </div>
+        {entry.data.tags.length > 0 && (
+          <div class="rail-block">
+            <span class="rail-label"><Tag size={13} /> TAGS</span>
+            <ul class="rail-tags">
+              {entry.data.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </div>
+        )}
+        <div class="rail-block rail-source">
+          <span class="rail-label">SOURCE</span>
+          <p>{entry.data.sourcePath}</p>
+        </div>
+      </aside>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <aside class="article-margin" data-pagefind-ignore>
+        <span>{String(currentIndex + 1).padStart(3, "0")}</span>
+        <span>{entry.collection.toUpperCase()}</span>
+      </aside>
+    </div>
+  </article>
+
+  <nav class="entry-pagination wide-shell" aria-label="前后文章" data-pagefind-ignore>
+    {previous ? (
+      <a href={entryHref(previous)}>
+        <span><ArrowLeft size={15} /> 较早</span>
+        <strong>{previous.data.title}</strong>
+      </a>
+    ) : <span></span>}
+    {next ? (
+      <a href={entryHref(next)}>
+        <span>较新 <ArrowRight size={15} /></span>
+        <strong>{next.data.title}</strong>
+      </a>
+    ) : <span></span>}
+  </nav>
+
+  {related.length > 0 && (
+    <section class="related-section wide-shell" data-pagefind-ignore>
+      <div class="section-heading compact-heading">
+        <div>
+          <p class="eyebrow">RELATED SIGNALS</p>
+          <h2>沿着线索继续</h2>
+        </div>
+        <RandomLink entries={allEntries} />
+      </div>
+      <div class="article-list">
+        {related.map((item, index) => <ArticleRow entry={item} index={index} />)}
+      </div>
+    </section>
+  )}
+</BaseLayout>

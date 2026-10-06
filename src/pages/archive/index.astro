@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleRow from "../../components/ArticleRow.astro";
+import RandomLink from "../../components/RandomLink.astro";
+import { getAllEntries, type SiteEntry } from "../../lib/content";
+
+const entries = await getAllEntries();
+const years = new Map<number, SiteEntry[]>();
+for (const entry of entries) {
+  const year = entry.data.date.getFullYear();
+  years.set(year, [...(years.get(year) ?? []), entry]);
+}
+---
+
+<BaseLayout title="时间归档" description="hhh电台的完整时间归档。">
+  <header class="plain-masthead">
+    <div class="wide-shell plain-masthead-grid">
+      <div>
+        <p class="eyebrow">CHRONOLOGICAL ARCHIVE</p>
+        <h1>时间归档</h1>
+      </div>
+      <p>这里不判断哪种兴趣更重要，只按时间保留每一次正式收录。也适合在很久以后重新找到当时的坐标。</p>
+      <RandomLink entries={entries} />
+    </div>
+  </header>
+
+  <section class="archive-shell wide-shell">
+    {[...years.entries()].map(([year, yearEntries]) => (
+      <section class="archive-year">
+        <header>
+          <h2>{year}</h2>
+          <span>{String(yearEntries.length).padStart(2, "0")} ENTRIES</span>
+        </header>
+        <div class="article-list">
+          {yearEntries.map((entry, index) => <ArticleRow entry={entry} index={index} />)}
+        </div>
+      </section>
+    ))}
+  </section>
+</BaseLayout>

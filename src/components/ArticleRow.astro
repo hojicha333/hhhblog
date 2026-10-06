@@ -1,0 +1,38 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+import type { SiteEntry } from "../lib/content";
+import { collectionInfo, entryHref, formatDate, readingLabel } from "../lib/content";
+
+interface Props {
+  entry: SiteEntry;
+  index?: number;
+  showCollection?: boolean;
+}
+
+const { entry, index, showCollection = true } = Astro.props;
+const info = collectionInfo(entry);
+---
+
+<article class="article-row" data-reveal>
+  <a href={entryHref(entry)} aria-label={`阅读：${entry.data.title}`}>
+    <div class="article-row-marker">
+      {index !== undefined ? String(index + 1).padStart(2, "0") : info.code.slice(-2)}
+    </div>
+    <div class="article-row-main">
+      <div class="article-row-meta">
+        {showCollection && <span class={`accent-${info.accent}`}>{info.label} / {info.english}</span>}
+        <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+        <span>{readingLabel(entry.data.readingMinutes)}</span>
+        {entry.data.status === "sample" && <span>示例</span>}
+      </div>
+      <h3>{entry.data.title}</h3>
+      <p>{entry.data.description}</p>
+      {entry.data.tags.length > 0 && (
+        <ul class="tag-list" aria-label="标签">
+          {entry.data.tags.slice(0, 4).map((tag) => <li>{tag}</li>)}
+        </ul>
+      )}
+    </div>
+    <ArrowUpRight class="article-row-arrow" size={20} stroke-width={1.5} aria-hidden="true" />
+  </a>
+</article>

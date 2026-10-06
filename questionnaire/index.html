@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="一份用于梳理个人博客方向、内容、审美、技术与长期维护方式的交互问卷。"
+    />
+    <title>个人网站方向问卷</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#questionnaire">跳到问卷正文</a>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="问卷章节">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div>
+            <p class="eyebrow">SITE BRIEF / 01</p>
+            <h1>个人网站<br />方向问卷</h1>
+          </div>
+        </div>
+
+        <nav id="chapter-nav" class="chapter-nav"></nav>
+
+        <div class="sidebar-footer">
+          <div class="save-state" aria-live="polite">
+            <span id="save-dot" class="save-dot"></span>
+            <span id="save-label">尚未作答</span>
+          </div>
+          <button id="clear-draft" class="text-button" type="button">清空本地草稿</button>
+        </div>
+      </aside>
+
+      <main id="questionnaire" class="main-content">
+        <header class="topbar">
+          <div class="depth-control" role="group" aria-label="问卷深度">
+            <button type="button" data-depth="1">轻量</button>
+            <button type="button" data-depth="2" class="is-active">标准</button>
+            <button type="button" data-depth="3">深潜</button>
+          </div>
+          <div class="progress-cluster">
+            <span id="progress-label">关键题 0 / 0</span>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progress-fill"></span>
+            </div>
+          </div>
+        </header>
+
+        <section class="intro-band" aria-labelledby="intro-title">
+          <div class="intro-copy">
+            <p class="eyebrow">先描述你想住进怎样的网络空间</p>
+            <h2 id="intro-title">答案可以矛盾，犹豫本身也是设计线索。</h2>
+          </div>
+          <div class="intro-index" aria-hidden="true">
+            <span>内容</span>
+            <span>审美</span>
+            <span>技术</span>
+            <span>未来</span>
+          </div>
+        </section>
+
+        <form id="survey-form" novalidate>
+          <div id="section-root"></div>
+        </form>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <dialog id="clear-dialog" class="confirm-dialog">
+      <form method="dialog">
+        <p class="eyebrow">RESET DRAFT</p>
+        <h2>清空当前所有答案？</h2>
+        <p>浏览器中的问卷草稿会被删除，这一步无法撤销。</p>
+        <div class="dialog-actions">
+          <button value="cancel" class="button secondary">保留草稿</button>
+          <button id="confirm-clear" value="confirm" class="button danger">确认清空</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

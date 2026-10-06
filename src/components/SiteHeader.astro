@@ -1,0 +1,101 @@
+---
+import { Menu, Moon, Search, Shuffle, Sun, X } from "@lucide/astro";
+import { site } from "../data/site";
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => pathname.startsWith(href);
+---
+
+<header class="site-header" data-pagefind-ignore>
+  <a class="skip-link" href="#main-content">跳到正文</a>
+  <div class="header-inner">
+    <a class="wordmark" href="/" aria-label="hhh电台首页">
+      <span class="wordmark-dot" aria-hidden="true"></span>
+      <span>{site.name}</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="主要导航">
+      {site.nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+          <span>{item.label}</span>
+          <small>{item.sublabel}</small>
+        </a>
+      ))}
+    </nav>
+
+    <div class="header-tools">
+      <a class="icon-button desktop-tool" href="/random/" aria-label="随机漫游" title="随机漫游">
+        <Shuffle size={18} stroke-width={1.7} />
+      </a>
+      <a class="icon-button" href="/search/" aria-label="搜索" title="搜索">
+        <Search size={19} stroke-width={1.7} />
+      </a>
+      <button class="icon-button theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题">
+        <Sun class="theme-icon theme-icon-light" size={19} stroke-width={1.7} />
+        <Moon class="theme-icon theme-icon-dark" size={19} stroke-width={1.7} />
+      </button>
+      <button class="icon-button menu-toggle" type="button" aria-label="打开导航" aria-expanded="false">
+        <Menu class="menu-open-icon" size={21} stroke-width={1.7} />
+        <X class="menu-close-icon" size={21} stroke-width={1.7} />
+      </button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" aria-label="移动端导航" aria-hidden="true" inert>
+    {site.nav.map((item, index) => (
+      <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+        <span class="mobile-nav-index">0{index + 1}</span>
+        <span>{item.label}</span>
+        <small>{item.sublabel}</small>
+      </a>
+    ))}
+    <div class="mobile-nav-secondary">
+      <a href="/archive/">时间归档</a>
+      <a href="/about/">关于这里</a>
+      <a href="/random/">随机漫游</a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const setupHeader = () => {
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const menuButton = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    const themeButton = document.querySelector<HTMLButtonElement>(".theme-toggle");
+
+    const mobileNav = document.querySelector<HTMLElement>(".mobile-nav");
+    if (!header || !menuButton || !themeButton || header.dataset.ready === "true") return;
+    header.dataset.ready = "true";
+
+    const setMenu = (open: boolean) => {
+      header.classList.toggle("menu-is-open", open);
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "关闭导航" : "打开导航");
+      document.body.classList.toggle("menu-is-open", open);
+      mobileNav?.setAttribute("aria-hidden", String(!open));
+      if (open) mobileNav?.removeAttribute("inert");
+      else mobileNav?.setAttribute("inert", "");
+    };
+
+    menuButton.addEventListener("click", () => setMenu(!header.classList.contains("menu-is-open")));
+    mobileNav?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && header.classList.contains("menu-is-open")) {
+        setMenu(false);
+        menuButton.focus();
+      }
+    });
+
+    themeButton.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      document.documentElement.style.colorScheme = next;
+      localStorage.setItem("hhh-theme", next);
+      themeButton.setAttribute("aria-label", next === "dark" ? "切换至浅色主题" : "切换至深色主题");
+    });
+  };
+
+  setupHeader();
+  document.addEventListener("astro:page-load", setupHeader);
+</script>

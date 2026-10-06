@@ -1,0 +1,13 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RoomIndex from "../../components/RoomIndex.astro";
+import type { SiteEntry } from "../../lib/content";
+
+const entries = (await getCollection("essays"))
+  .filter((entry) => entry.data.status !== "archived")
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) as SiteEntry[];
+---
+<BaseLayout title="放映室 / Essays" description="长文、阶段判断与生活实验。">
+  <RoomIndex collection="essays" entries={entries} />
+</BaseLayout>

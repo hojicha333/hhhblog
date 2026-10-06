@@ -1,0 +1,35 @@
+---
+import { Radio, Shuffle } from "@lucide/astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { entryHref, getAllEntries } from "../lib/content";
+
+const entries = await getAllEntries();
+const paths = entries.map(entryHref);
+---
+
+<BaseLayout title="随机漫游" description="随机进入 hhh电台的一篇内容。" noindex>
+  <section class="random-tuner wide-shell" data-paths={JSON.stringify(paths)}>
+    <div class="tuner-dial" aria-hidden="true">
+      <Radio size={42} stroke-width={1.2} />
+    </div>
+    <p class="eyebrow">RANDOM TUNER</p>
+    <h1>正在寻找一个信号</h1>
+    <p>如果没有自动跳转，可以重新转动旋钮。</p>
+    <button class="button-link" type="button" data-tune>
+      <Shuffle size={17} /> 再调一次
+    </button>
+  </section>
+</BaseLayout>
+
+<script>
+  const tuner = document.querySelector<HTMLElement>(".random-tuner");
+  const button = document.querySelector<HTMLButtonElement>("[data-tune]");
+  const tune = () => {
+    const paths = JSON.parse(tuner?.dataset.paths || "[]") as string[];
+    if (!paths.length) return;
+    const target = paths[Math.floor(Math.random() * paths.length)];
+    window.setTimeout(() => window.location.assign(target), 500);
+  };
+  button?.addEventListener("click", tune);
+  tune();
+</script>

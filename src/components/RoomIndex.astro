@@ -1,0 +1,76 @@
+---
+import { ArrowRight } from "@lucide/astro";
+import type { SiteEntry } from "../lib/content";
+import { entryHref, formatDate } from "../lib/content";
+import type { CollectionName } from "../data/site";
+import { collectionMeta } from "../data/site";
+import CoverImage from "./CoverImage.astro";
+import ArticleRow from "./ArticleRow.astro";
+
+interface Props {
+  collection: CollectionName;
+  entries: SiteEntry[];
+}
+
+const { collection, entries } = Astro.props;
+const info = collectionMeta[collection];
+const featured = entries.find((entry) => entry.data.featured) ?? entries[0];
+const remainder = entries.filter((entry) => entry.id !== featured?.id);
+const cover = featured?.data.cover ?? (collection === "projects" ? "console" : collection === "signals" ? "editorial" : "rooms");
+---
+
+<section class={`room-masthead accent-border-${info.accent}`}>
+  <div class="wide-shell room-title-grid">
+    <div class="room-code">
+      <span>{info.code}</span>
+      <span>HHH RADIO / DIRECTORY</span>
+    </div>
+    <div>
+      <p class={`eyebrow accent-${info.accent}`}>{info.english}</p>
+      <h1>{info.label}</h1>
+    </div>
+    <p class="room-description">{info.description}</p>
+  </div>
+</section>
+
+{featured && (
+  <section class="room-feature wide-shell" data-reveal>
+    <a class="room-feature-image" href={entryHref(featured)} tabindex="-1" aria-hidden="true">
+      <CoverImage
+        name={cover}
+        alt={featured.data.coverAlt || "栏目代表图像"}
+        loading="eager"
+        sizes="(max-width: 760px) 100vw, 58vw"
+      />
+    </a>
+    <div class="room-feature-copy">
+      <div class="meta-line">
+        <span>SELECTED ENTRY</span>
+        <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
+        {featured.data.status === "sample" && <span>SAMPLE</span>}
+      </div>
+      <h2>{featured.data.title}</h2>
+      <p>{featured.data.description}</p>
+      <a class="text-link" href={entryHref(featured)}>
+        打开这一篇 <ArrowRight size={16} stroke-width={1.6} />
+      </a>
+    </div>
+  </section>
+)}
+
+<section class="wide-shell room-entries">
+  <div class="section-heading compact-heading">
+    <div>
+      <p class="eyebrow">INDEX / {String(entries.length).padStart(2, "0")} ENTRIES</p>
+      <h2>房间里的其他内容</h2>
+    </div>
+    <a href="/archive/">查看时间归档</a>
+  </div>
+  <div class="article-list">
+    {remainder.length > 0 ? (
+      remainder.map((entry, index) => <ArticleRow entry={entry} index={index} showCollection={false} />)
+    ) : (
+      <p class="empty-state">这个房间正在等待下一条内容。</p>
+    )}
+  </div>
+</section>

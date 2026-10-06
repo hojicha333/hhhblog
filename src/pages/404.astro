@@ -1,0 +1,17 @@
+---
+import { ArrowLeft, Search } from "@lucide/astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="频率未找到" description="这个地址没有对应的内容。" noindex bodyClass="not-found-page">
+  <section class="not-found wide-shell">
+    <div class="not-found-code" aria-hidden="true">404</div>
+    <p class="eyebrow">NO SIGNAL AT THIS FREQUENCY</p>
+    <h1>这个频率暂时没有内容。</h1>
+    <p>地址可能已经改变，也可能这间房还没有建好。</p>
+    <div class="not-found-actions">
+      <a class="button-link" href="/"><ArrowLeft size={17} /> 返回首页</a>
+      <a class="text-link" href="/search/"><Search size={16} /> 搜索归档</a>
+    </div>
+  </section>
+</BaseLayout>

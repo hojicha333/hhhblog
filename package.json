@@ -1,0 +1,27 @@
+{
+  "name": "hhh-radio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "content:prepare": "node scripts/prepare-content.mjs",
+    "dev": "npm run content:prepare && astro dev",
+    "build": "npm run content:prepare && astro build && pagefind --site dist",
+    "check": "npm run content:prepare && astro check",
+    "preview": "astro preview",
+    "clean": "node scripts/clean.mjs"
+  },
+  "dependencies": {
+    "@lucide/astro": "^1.52.0",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/rss": "^4.0.15",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "pagefind": "^1.5.2",
+    "typescript": "^5.9.3"
+  }
+}
