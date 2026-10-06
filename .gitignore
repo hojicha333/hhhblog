@@ -9,3 +9,9 @@ Thumbs.db
 .env.*
 !.env.example
 .playwright-mcp/
+
+# Local planning and authoring notes; never publish these with the site.
+个人网站方向问卷.json
+参考说明.md
+设计方向简报.md
+本地内容更新指导手册.md
